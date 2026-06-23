@@ -1,5 +1,11 @@
 import Link from "next/link";
-import type { ProductDetail } from "@/src/lib/admin/products";
+import { ProductDeleteForm } from "@/src/components/admin/products/product-delete-form";
+import { ProductForm } from "@/src/components/admin/products/product-form";
+import { ProductStatusForm } from "@/src/components/admin/products/product-status-form";
+import {
+  getProductCategoryOptions,
+  type ProductDetail,
+} from "@/src/lib/admin/products";
 
 const currencyFormatter = new Intl.NumberFormat("en-IN", {
   currency: "INR",
@@ -13,8 +19,13 @@ const dateFormatter = new Intl.DateTimeFormat("en-IN", {
   year: "numeric",
 });
 
-export function ProductDetailSummary({ product }: { product: ProductDetail }) {
+export async function ProductDetailSummary({
+  product,
+}: {
+  product: ProductDetail;
+}) {
   const baseVariant = product.variants[0];
+  const categoryOptions = await getProductCategoryOptions();
 
   return (
     <div className="space-y-6">
@@ -66,11 +77,69 @@ export function ProductDetailSummary({ product }: { product: ProductDetail }) {
           </p>
         </article>
         <article className="rounded-lg border border-zinc-200 bg-white p-5">
-          <p className="text-sm font-medium text-zinc-500">Created</p>
-          <p className="mt-3 text-lg font-semibold text-zinc-950">
-            {dateFormatter.format(new Date(product.created_at))}
+          <p className="text-sm font-medium text-zinc-500">Status</p>
+          <p className="mt-3 text-lg font-semibold capitalize text-zinc-950">
+            {product.status}
           </p>
         </article>
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-2">
+        <div className="rounded-lg border border-zinc-200 bg-white p-5">
+          <h2 className="text-base font-semibold text-zinc-950">
+            Edit Product
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-zinc-600">
+            Update catalog details, SKU, and base price.
+          </p>
+          <div className="mt-5">
+            {categoryOptions.error ? (
+              <p className="text-sm text-red-700">{categoryOptions.error}</p>
+            ) : (
+              <ProductForm
+                categories={categoryOptions.categories}
+                mode="edit"
+                product={{
+                  ...product,
+                  basePrice: baseVariant?.price ?? null,
+                  sku: baseVariant?.sku ?? "",
+                }}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <section className="rounded-lg border border-zinc-200 bg-white p-5">
+            <h2 className="text-base font-semibold text-zinc-950">
+              Product Status
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-zinc-600">
+              Change visibility without editing the full product record.
+            </p>
+            <div className="mt-5">
+              <ProductStatusForm
+                currentStatus={product.status}
+                productId={product.id}
+              />
+            </div>
+          </section>
+
+          <section className="rounded-lg border border-zinc-200 bg-white p-5">
+            <h2 className="text-base font-semibold text-zinc-950">
+              Delete Product
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-zinc-600">
+              Soft-delete this product and archive it from the catalog.
+            </p>
+            <div className="mt-5">
+              <ProductDeleteForm
+                productId={product.id}
+                productName={product.name}
+              />
+            </div>
+          </section>
+        </div>
       </section>
 
       <section className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
@@ -150,6 +219,10 @@ export function ProductDetailSummary({ product }: { product: ProductDetail }) {
           </div>
         )}
       </section>
+
+      <p className="text-sm text-zinc-500">
+        Created {dateFormatter.format(new Date(product.created_at))}
+      </p>
     </div>
   );
 }
