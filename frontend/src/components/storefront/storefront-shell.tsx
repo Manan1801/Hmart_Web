@@ -46,6 +46,12 @@ export function StorefrontHeader({
             </Link>
             <Link
               className="inline-flex h-10 items-center justify-center rounded-full border border-zinc-300 px-4 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50"
+              href="/cart"
+            >
+              Cart
+            </Link>
+            <Link
+              className="inline-flex h-10 items-center justify-center rounded-full border border-zinc-300 px-4 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50"
               href="/login"
             >
               Sign in
@@ -94,6 +100,9 @@ export function StorefrontFooter() {
         <div className="flex flex-wrap gap-4 text-sm text-zinc-300">
           <Link className="transition-colors hover:text-white" href="/products">
             Products
+          </Link>
+          <Link className="transition-colors hover:text-white" href="/cart">
+            Cart
           </Link>
           <Link className="transition-colors hover:text-white" href="/login">
             Sign in

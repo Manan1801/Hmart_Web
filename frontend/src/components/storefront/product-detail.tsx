@@ -1,6 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import { useAuth } from "@/src/hooks/use-auth";
+import { addCartItemAction } from "@/src/lib/storefront/cart-actions";
+import { addLocalCartItem } from "@/src/lib/storefront/cart-storage";
 import type {
   StorefrontProductImage,
   StorefrontProductVariant,
@@ -126,5 +130,153 @@ export function ProductStockBadge({ inStock }: { inStock: boolean }) {
     >
       {inStock ? "In stock" : "Out of stock"}
     </span>
+  );
+}
+
+export function ProductAddToCartPanel({
+  variants,
+}: {
+  variants: StorefrontProductVariant[];
+}) {
+  const firstAvailableVariant =
+    variants.find((variant) => variant.inStock) ?? variants[0] ?? null;
+  const [selectedVariantId, setSelectedVariantId] = useState(
+    firstAvailableVariant?.id ?? "",
+  );
+  const [quantity, setQuantity] = useState(1);
+  const [isPending, setIsPending] = useState(false);
+  const [message, setMessage] = useState<{
+    status: "success" | "error";
+    text: string;
+  } | null>(null);
+  const { isAuthenticated, isLoading } = useAuth();
+  const selectedVariant =
+    variants.find((variant) => variant.id === selectedVariantId) ??
+    firstAvailableVariant;
+  const maxQuantity = selectedVariant?.availableStock ?? 0;
+  const canAdd =
+    Boolean(selectedVariant?.inStock) && quantity >= 1 && quantity <= maxQuantity;
+
+  async function handleAddToCart() {
+    if (!selectedVariant || !canAdd) {
+      setMessage({
+        status: "error",
+        text: "Choose an in-stock variant before adding to cart.",
+      });
+      return;
+    }
+
+    setIsPending(true);
+    setMessage(null);
+
+    try {
+      if (isAuthenticated) {
+        const result = await addCartItemAction({
+          variantId: selectedVariant.id,
+          quantity,
+        });
+
+        setMessage({ status: result.status, text: result.message });
+      } else {
+        const result = addLocalCartItem({
+          variantId: selectedVariant.id,
+          quantity,
+          availableStock: selectedVariant.availableStock,
+        });
+
+        setMessage({ status: result.status, text: result.message });
+      }
+    } finally {
+      setIsPending(false);
+    }
+  }
+
+  if (variants.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="rounded-2xl border border-zinc-200 bg-white p-5">
+      <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_120px]">
+        <label className="block">
+          <span className="text-sm font-medium text-zinc-800">Variant</span>
+          <select
+            className="mt-2 h-11 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm outline-none transition-colors focus:border-zinc-950"
+            onChange={(event) => {
+              setSelectedVariantId(event.target.value);
+              setQuantity(1);
+              setMessage(null);
+            }}
+            value={selectedVariant?.id ?? ""}
+          >
+            {variants.map((variant) => (
+              <option disabled={!variant.inStock} key={variant.id} value={variant.id}>
+                {variant.sku} - {formatCurrency(variant.price)}
+                {variant.unit ? ` / ${variant.unit}` : ""}
+                {variant.inStock ? "" : " - Out of stock"}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="block">
+          <span className="text-sm font-medium text-zinc-800">Quantity</span>
+          <input
+            className="mt-2 h-11 w-full rounded-md border border-zinc-300 px-3 text-sm outline-none transition-colors focus:border-zinc-950 disabled:bg-zinc-100"
+            disabled={!selectedVariant?.inStock}
+            max={Math.max(maxQuantity, 1)}
+            min={1}
+            onChange={(event) => {
+              const nextQuantity = Number.parseInt(event.target.value, 10);
+              setQuantity(Number.isFinite(nextQuantity) ? nextQuantity : 1);
+              setMessage(null);
+            }}
+            type="number"
+            value={quantity}
+          />
+        </label>
+      </div>
+
+      {selectedVariant ? (
+        <p className="mt-3 text-sm text-zinc-600">
+          {selectedVariant.inStock
+            ? `${selectedVariant.availableStock} available for ${selectedVariant.sku}.`
+            : "This variant is out of stock."}
+        </p>
+      ) : null}
+
+      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <button
+          className="inline-flex h-11 items-center justify-center rounded-md bg-zinc-950 px-5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300"
+          disabled={isLoading || isPending || !canAdd}
+          onClick={handleAddToCart}
+          type="button"
+        >
+          {isPending
+            ? "Adding..."
+            : isLoading
+              ? "Checking session..."
+              : "Add to cart"}
+        </button>
+        <Link
+          className="inline-flex h-11 items-center justify-center rounded-md border border-zinc-300 px-5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50"
+          href="/cart"
+        >
+          View cart
+        </Link>
+      </div>
+
+      {message ? (
+        <p
+          className={`mt-4 rounded-md px-3 py-2 text-sm ${
+            message.status === "success"
+              ? "bg-emerald-50 text-emerald-700"
+              : "bg-red-50 text-red-700"
+          }`}
+        >
+          {message.text}
+        </p>
+      ) : null}
+    </div>
   );
 }

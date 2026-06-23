@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductGrid } from "@/src/components/storefront/product-card";
 import {
+  ProductAddToCartPanel,
   ProductImageGallery,
   ProductStockBadge,
   ProductVariantList,
@@ -142,6 +143,8 @@ export default async function ProductDetailPage({
               </p>
             </div>
           ) : null}
+
+          <ProductAddToCartPanel variants={product.variants} />
         </div>
       </div>
 
