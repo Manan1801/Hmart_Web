@@ -1,8 +1,9 @@
 "use server";
 
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/src/lib/supabase/server";
+import { PASSWORD_RECOVERY_COOKIE } from "./recovery";
 import type { AuthActionState } from "./types";
 import { getSafeRedirectPath } from "./redirects";
 
@@ -169,6 +170,15 @@ export async function resetPasswordAction(
   }
 
   const supabase = await createClient();
+  const cookieStore = await cookies();
+
+  if (cookieStore.get(PASSWORD_RECOVERY_COOKIE)?.value !== "1") {
+    return {
+      status: "error",
+      message: "Your reset link is invalid or has expired. Request a new one.",
+    };
+  }
+
   const { data } = await supabase.auth.getUser();
 
   if (!data.user) {
@@ -186,6 +196,7 @@ export async function resetPasswordAction(
     return { status: "error", message: error.message };
   }
 
+  cookieStore.delete(PASSWORD_RECOVERY_COOKIE);
   await supabase.auth.signOut();
   redirect("/login?reset=1");
 }

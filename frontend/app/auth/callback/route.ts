@@ -1,6 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/src/lib/supabase/server";
 import { getSafeRedirectPath } from "@/src/lib/auth/redirects";
+import {
+  PASSWORD_RECOVERY_COOKIE,
+  PASSWORD_RECOVERY_COOKIE_MAX_AGE,
+} from "@/src/lib/auth/recovery";
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
@@ -12,7 +16,19 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      return NextResponse.redirect(new URL(next, requestUrl.origin));
+      const response = NextResponse.redirect(new URL(next, requestUrl.origin));
+
+      if (next === "/reset-password") {
+        response.cookies.set(PASSWORD_RECOVERY_COOKIE, "1", {
+          httpOnly: true,
+          maxAge: PASSWORD_RECOVERY_COOKIE_MAX_AGE,
+          path: "/",
+          sameSite: "lax",
+          secure: requestUrl.protocol === "https:",
+        });
+      }
+
+      return response;
     }
   }
 

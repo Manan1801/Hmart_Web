@@ -15,6 +15,13 @@ export async function getCurrentUser() {
 
 export async function getCurrentSession() {
   const supabase = await createClient();
+  const { data: claimsData, error: claimsError } =
+    await supabase.auth.getClaims();
+
+  if (claimsError || !claimsData?.claims) {
+    return null;
+  }
+
   const { data, error } = await supabase.auth.getSession();
 
   if (error) {
