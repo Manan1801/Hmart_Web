@@ -35,9 +35,9 @@ export function InventoryLocationsTable({
               <tr className="align-top text-zinc-700" key={location.id}>
                 <td className="px-5 py-4">
                   <p className="font-medium text-zinc-950">{location.name}</p>
-                  {location.description ? (
+                  {(location as any).description ? (
                     <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-600">
-                      {location.description}
+                      {(location as any).description}
                     </p>
                   ) : null}
                 </td>

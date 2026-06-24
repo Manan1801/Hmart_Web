@@ -1,3 +1,5 @@
+export const PRODUCT_STATUS_OPTIONS = ["draft", "active", "inactive", "archived"] as const;
+
 export type AdminMetric = {
   label: string;
   value: string;

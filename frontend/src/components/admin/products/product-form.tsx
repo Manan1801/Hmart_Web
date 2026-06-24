@@ -4,9 +4,9 @@ import { useActionState } from "react";
 import {
   createProductAction,
   initialProductActionState,
-  PRODUCT_STATUS_OPTIONS,
   updateProductAction,
 } from "@/src/lib/admin/product-actions";
+import { PRODUCT_STATUS_OPTIONS } from "@/src/lib/admin/placeholder-data";
 import type {
   ProductCategoryOption,
   ProductDetail,

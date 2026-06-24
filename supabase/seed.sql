@@ -1,165 +1,295 @@
 -- ============================================================================
--- HMART Seed Data: Synthetic but realistic catalog for an Indian grocery &
--- household essentials store.
+-- HMART Seed Data: Full product catalog with hierarchical categories
+-- Housekeeping, Stationery, Safety, Security, Office Pantry, Sports
 -- ============================================================================
 
 begin;
 
--- ─── Categories ─────────────────────────────────────────────────────────────
+-- ─── Top-level Categories ───────────────────────────────────────────────────
 
 insert into public.categories (id, name, slug, description, sort_order, is_active)
 values
-  ('ca000001-0000-0000-0000-000000000001', 'Fruits & Vegetables', 'fruits-vegetables', 'Farm-fresh fruits, leafy greens, and seasonal vegetables.', 1, true),
-  ('ca000001-0000-0000-0000-000000000002', 'Dairy, Bread & Eggs', 'dairy-bread-eggs', 'Milk, curd, paneer, eggs, butter, and fresh bakery bread.', 2, true),
-  ('ca000001-0000-0000-0000-000000000003', 'Snacks & Munchies', 'snacks-munchies', 'Chips, namkeen, biscuits, and ready-to-eat snacks.', 3, true),
-  ('ca000001-0000-0000-0000-000000000004', 'Cold Drinks & Juices', 'cold-drinks-juices', 'Soft drinks, juices, coconut water, and energy drinks.', 4, true),
-  ('ca000001-0000-0000-0000-000000000005', 'Breakfast & Instant Food', 'breakfast-instant-food', 'Oats, cornflakes, noodles, pasta, and ready-to-cook mixes.', 5, true),
-  ('ca000001-0000-0000-0000-000000000006', 'Atta, Rice & Dal', 'atta-rice-dal', 'Wheat flour, basmati rice, pulses, and whole grains.', 6, true),
-  ('ca000001-0000-0000-0000-000000000007', 'Tea, Coffee & Health Drinks', 'tea-coffee-health-drinks', 'Tea leaves, coffee powder, green tea, and malt beverages.', 7, true),
-  ('ca000001-0000-0000-0000-000000000008', 'Cleaning & Household', 'cleaning-household', 'Detergent, floor cleaners, dishwash, and mops.', 8, true),
-  ('ca000001-0000-0000-0000-000000000009', 'Personal Care', 'personal-care', 'Soaps, shampoo, toothpaste, skincare, and grooming essentials.', 9, true),
-  ('ca000001-0000-0000-0000-00000000000a', 'Baby Care', 'baby-care', 'Diapers, baby food, wipes, and infant toiletries.', 10, true),
-  ('ca000001-0000-0000-0000-00000000000b', 'Stationery & Office', 'stationery-office', 'Pens, notebooks, files, tape, and printer paper.', 11, true),
-  ('ca000001-0000-0000-0000-00000000000c', 'Safety & PPE', 'safety-ppe', 'Masks, gloves, sanitizers, first-aid kits, and safety goggles.', 12, true)
+  ('ca000001-0000-0000-0000-000000000001', 'Housekeeping', 'housekeeping', 'Cleaning chemicals, tools, waste management, and PPE for facility maintenance.', 1, true),
+  ('ca000001-0000-0000-0000-000000000002', 'Stationery', 'stationery', 'Writing tools, paper products, office supplies, and art materials.', 2, true),
+  ('ca000001-0000-0000-0000-000000000003', 'Safety', 'safety', 'Personal protective equipment, industrial safety, and road safety gear.', 3, true),
+  ('ca000001-0000-0000-0000-000000000004', 'Security', 'security', 'CCTV, smart locks, alarm systems, and surveillance equipment.', 4, true),
+  ('ca000001-0000-0000-0000-000000000005', 'Office Pantry', 'office-pantry', 'Beverages, snacks, and refreshments for the workplace.', 5, true),
+  ('ca000001-0000-0000-0000-000000000006', 'Sports', 'sports', 'Team sports, fitness equipment, protective gear, and apparel.', 6, true)
+on conflict (id) do nothing;
+
+-- ─── Sub-categories (parent_id references top-level) ────────────────────────
+
+insert into public.categories (id, parent_id, name, slug, description, sort_order, is_active)
+values
+  -- Housekeeping subs
+  ('ca000002-0000-0000-0000-000000000001', 'ca000001-0000-0000-0000-000000000001', 'Cleaning Chemicals & Solutions', 'cleaning-chemicals', 'Disinfectants, sanitizers, floor cleaners, and degreasers.', 1, true),
+  ('ca000002-0000-0000-0000-000000000002', 'ca000001-0000-0000-0000-000000000001', 'Cleaning Tools & Equipment', 'cleaning-tools', 'Brooms, mops, brushes, vacuum cleaners, and trolleys.', 2, true),
+  ('ca000002-0000-0000-0000-000000000003', 'ca000001-0000-0000-0000-000000000001', 'Waste Management', 'waste-management', 'Dustbins, trash bags, and toilet paper.', 3, true),
+  ('ca000002-0000-0000-0000-000000000004', 'ca000001-0000-0000-0000-000000000001', 'Housekeeping PPE', 'housekeeping-ppe', 'Gloves and masks for cleaning staff.', 4, true),
+  -- Stationery subs
+  ('ca000002-0000-0000-0000-000000000005', 'ca000001-0000-0000-0000-000000000002', 'Writing Tools', 'writing-tools', 'Pens, pencils, markers, and highlighters.', 1, true),
+  ('ca000002-0000-0000-0000-000000000006', 'ca000001-0000-0000-0000-000000000002', 'Paper Products', 'paper-products', 'Notebooks, envelopes, sticky notes, and letterheads.', 2, true),
+  ('ca000002-0000-0000-0000-000000000007', 'ca000001-0000-0000-0000-000000000002', 'Office Supplies', 'office-supplies', 'Staplers, clips, tape, scissors, folders, and binders.', 3, true),
+  ('ca000002-0000-0000-0000-000000000008', 'ca000001-0000-0000-0000-000000000002', 'Desk Accessories', 'desk-accessories', 'Pencil cases, sharpeners, erasers, and organizers.', 4, true),
+  ('ca000002-0000-0000-0000-000000000009', 'ca000001-0000-0000-0000-000000000002', 'Art Supplies', 'art-supplies', 'Paints, brushes, crayons, and colored pencils.', 5, true),
+  -- Safety subs
+  ('ca000002-0000-0000-0000-00000000000a', 'ca000001-0000-0000-0000-000000000003', 'Personal Protective Equipment', 'personal-protective-equipment', 'Hard hats, goggles, respirators, safety shoes, and coveralls.', 1, true),
+  ('ca000002-0000-0000-0000-00000000000b', 'ca000001-0000-0000-0000-000000000003', 'Industrial Safety', 'industrial-safety', 'Harnesses, fire extinguishers, smoke detectors, and spill kits.', 2, true),
+  ('ca000002-0000-0000-0000-00000000000c', 'ca000001-0000-0000-0000-000000000003', 'Road Safety', 'road-safety', 'Traffic cones, barricade tape, reflective jackets, and first aid.', 3, true),
+  -- Sports subs
+  ('ca000002-0000-0000-0000-00000000000d', 'ca000001-0000-0000-0000-000000000006', 'Team Sports', 'team-sports', 'Football, basketball, volleyball, and cricket equipment.', 1, true),
+  ('ca000002-0000-0000-0000-00000000000e', 'ca000001-0000-0000-0000-000000000006', 'Fitness', 'fitness', 'Dumbbells, yoga mats, resistance bands, and barbells.', 2, true),
+  ('ca000002-0000-0000-0000-00000000000f', 'ca000001-0000-0000-0000-000000000006', 'Protective Gear', 'protective-gear', 'Sports helmets, pads, and mouth guards.', 3, true),
+  ('ca000002-0000-0000-0000-000000000010', 'ca000001-0000-0000-0000-000000000006', 'Sports Apparel', 'sports-apparel', 'Jerseys, running shoes, and gym bags.', 4, true),
+  -- Office Pantry subs
+  ('ca000002-0000-0000-0000-000000000011', 'ca000001-0000-0000-0000-000000000005', 'Beverages', 'beverages', 'Coffee, tea, milk, water, and juices.', 1, true),
+  ('ca000002-0000-0000-0000-000000000012', 'ca000001-0000-0000-0000-000000000005', 'Snacks', 'snacks', 'Protein bars, nuts, cookies, biscuits, and chips.', 2, true)
 on conflict (id) do nothing;
 
 -- ─── Products ───────────────────────────────────────────────────────────────
 
 insert into public.products (id, primary_category_id, name, slug, description, brand, status)
 values
-  ('aa000001-0000-0000-0000-000000000001', 'ca000001-0000-0000-0000-000000000001', 'Fresh Banana (Dozen)', 'fresh-banana-dozen', 'Premium Robusta bananas, hand-picked for ripeness. Naturally sweet and rich in potassium.', 'Fresho', 'active'),
-  ('aa000001-0000-0000-0000-000000000002', 'ca000001-0000-0000-0000-000000000001', 'Organic Tomato 500g', 'organic-tomato-500g', 'Firm red tomatoes grown without pesticides. Great for curries, salads, and sauces.', 'Organic Tattva', 'active'),
-  ('aa000001-0000-0000-0000-000000000003', 'ca000001-0000-0000-0000-000000000001', 'Baby Spinach 200g', 'baby-spinach-200g', 'Tender baby spinach leaves, pre-washed and ready to eat or cook.', 'Fresho', 'active'),
-  ('aa000001-0000-0000-0000-000000000004', 'ca000001-0000-0000-0000-000000000002', 'Amul Toned Milk 1L', 'amul-toned-milk-1l', 'Pasteurized toned milk with 3% fat. Rich in calcium, ideal for daily use.', 'Amul', 'active'),
-  ('aa000001-0000-0000-0000-000000000005', 'ca000001-0000-0000-0000-000000000002', 'White Bread 400g', 'white-bread-400g', 'Soft and fresh sandwich bread sliced for convenience. No preservatives.', 'Harvest Gold', 'active'),
-  ('aa000001-0000-0000-0000-000000000006', 'ca000001-0000-0000-0000-000000000002', 'Farm Eggs (Pack of 12)', 'farm-eggs-pack-12', 'Free-range brown eggs, protein-packed and fresh from the farm.', 'Natures Basket', 'active'),
-  ('aa000001-0000-0000-0000-000000000007', 'ca000001-0000-0000-0000-000000000003', 'Lays Classic Salted 52g', 'lays-classic-salted-52g', 'Crispy golden potato chips lightly salted for the perfect crunch.', 'Lays', 'active'),
-  ('aa000001-0000-0000-0000-000000000008', 'ca000001-0000-0000-0000-000000000003', 'Haldiram Aloo Bhujia 400g', 'haldiram-aloo-bhujia-400g', 'Traditional Indian namkeen made with besan and potato. Crispy and addictive.', 'Haldirams', 'active'),
-  ('aa000001-0000-0000-0000-000000000009', 'ca000001-0000-0000-0000-000000000003', 'Parle-G Gold Biscuits 100g', 'parle-g-gold-100g', 'Premium glucose biscuits with extra milk and wheat. A timeless Indian snack.', 'Parle', 'active'),
-  ('aa000001-0000-0000-0000-00000000000a', 'ca000001-0000-0000-0000-000000000004', 'Coca-Cola 750ml', 'coca-cola-750ml', 'Classic cola refreshment. Serve chilled for best taste.', 'Coca-Cola', 'active'),
-  ('aa000001-0000-0000-0000-00000000000b', 'ca000001-0000-0000-0000-000000000004', 'Real Mixed Fruit Juice 1L', 'real-mixed-fruit-juice-1l', 'No added sugar fruit juice blend with mango, pineapple, and apple.', 'Real', 'active'),
-  ('aa000001-0000-0000-0000-00000000000c', 'ca000001-0000-0000-0000-000000000004', 'Paper Boat Aam Panna 200ml', 'paper-boat-aam-panna-200ml', 'Traditional raw mango drink. Tangy, sweet, and refreshing.', 'Paper Boat', 'active'),
-  ('aa000001-0000-0000-0000-00000000000d', 'ca000001-0000-0000-0000-000000000005', 'Kelloggs Corn Flakes 475g', 'kelloggs-corn-flakes-475g', 'Crispy golden flakes of corn, iron-fortified. Perfect breakfast with cold milk.', 'Kelloggs', 'active'),
-  ('aa000001-0000-0000-0000-00000000000e', 'ca000001-0000-0000-0000-000000000005', 'Maggi 2-Minute Noodles (Pack of 4)', 'maggi-2-min-noodles-4pk', 'Instant masala noodles everyone loves. Ready in 2 minutes.', 'Maggi', 'active'),
-  ('aa000001-0000-0000-0000-00000000000f', 'ca000001-0000-0000-0000-000000000005', 'Quaker Oats 1kg', 'quaker-oats-1kg', 'Rolled whole-grain oats. High in fibre and heart-healthy.', 'Quaker', 'active'),
-  ('aa000001-0000-0000-0000-000000000010', 'ca000001-0000-0000-0000-000000000006', 'Aashirvaad Atta 5kg', 'aashirvaad-atta-5kg', 'Whole wheat flour milled from the finest grains. Soft rotis every time.', 'Aashirvaad', 'active'),
-  ('aa000001-0000-0000-0000-000000000011', 'ca000001-0000-0000-0000-000000000006', 'India Gate Basmati Rice 1kg', 'india-gate-basmati-1kg', 'Long-grain aged basmati rice. Fluffy texture ideal for biryani and pulao.', 'India Gate', 'active'),
-  ('aa000001-0000-0000-0000-000000000012', 'ca000001-0000-0000-0000-000000000006', 'Toor Dal 1kg', 'toor-dal-1kg', 'Split pigeon peas, unpolished. Cooks evenly, rich earthy flavour.', 'Tata Sampann', 'active'),
-  ('aa000001-0000-0000-0000-000000000013', 'ca000001-0000-0000-0000-000000000007', 'Tata Tea Gold 500g', 'tata-tea-gold-500g', '15% long leaves for a rich aroma. Indias most trusted tea brand.', 'Tata Tea', 'active'),
-  ('aa000001-0000-0000-0000-000000000014', 'ca000001-0000-0000-0000-000000000007', 'Nescafe Classic 100g', 'nescafe-classic-100g', 'Instant coffee granules with a bold roasted flavour. Just add hot water.', 'Nescafe', 'active'),
-  ('aa000001-0000-0000-0000-000000000015', 'ca000001-0000-0000-0000-000000000007', 'Bournvita 500g Jar', 'bournvita-500g-jar', 'Chocolate health drink fortified with vitamins D and B12.', 'Cadbury', 'active'),
-  ('aa000001-0000-0000-0000-000000000016', 'ca000001-0000-0000-0000-000000000008', 'Surf Excel Matic Liquid 1L', 'surf-excel-matic-1l', 'Front-load washing machine detergent liquid. Tough stain removal in cold water.', 'Surf Excel', 'active'),
-  ('aa000001-0000-0000-0000-000000000017', 'ca000001-0000-0000-0000-000000000008', 'Lizol Floor Cleaner 500ml', 'lizol-floor-cleaner-500ml', 'Disinfectant floor cleaner kills 99.9% germs. Citrus fragrance.', 'Lizol', 'active'),
-  ('aa000001-0000-0000-0000-000000000018', 'ca000001-0000-0000-0000-000000000008', 'Vim Dishwash Bar 200g', 'vim-dishwash-bar-200g', 'Lemon power for sparkling clean utensils. Cuts through grease easily.', 'Vim', 'active'),
-  ('aa000001-0000-0000-0000-000000000019', 'ca000001-0000-0000-0000-000000000009', 'Dove Beauty Bar 100g', 'dove-beauty-bar-100g', 'Moisturizing beauty bar with 1/4 cream. Gentle enough for daily face and body use.', 'Dove', 'active'),
-  ('aa000001-0000-0000-0000-00000000001a', 'ca000001-0000-0000-0000-000000000009', 'Head & Shoulders Shampoo 340ml', 'head-shoulders-shampoo-340ml', 'Anti-dandruff shampoo with zinc pyrithione. Cool menthol variant.', 'Head & Shoulders', 'active'),
-  ('aa000001-0000-0000-0000-00000000001b', 'ca000001-0000-0000-0000-000000000009', 'Colgate MaxFresh Toothpaste 150g', 'colgate-maxfresh-150g', 'Gel toothpaste with cooling crystals for long-lasting fresh breath.', 'Colgate', 'active'),
-  ('aa000001-0000-0000-0000-00000000001c', 'ca000001-0000-0000-0000-00000000000a', 'Pampers Diapers Medium (Pack of 20)', 'pampers-diapers-medium-20', 'Ultra-soft diapers with 12-hour absorption. Gentle on baby skin.', 'Pampers', 'active'),
-  ('aa000001-0000-0000-0000-00000000001d', 'ca000001-0000-0000-0000-00000000000a', 'Cerelac Stage 2 Wheat Apple 300g', 'cerelac-wheat-apple-300g', 'Iron-fortified baby cereal for 8+ months. Easy to digest.', 'Nestle', 'active'),
-  ('aa000001-0000-0000-0000-00000000001e', 'ca000001-0000-0000-0000-00000000000a', 'Johnson Baby Wipes (Pack of 80)', 'johnson-baby-wipes-80', 'Clinically mild wipes free from alcohol, parabens, and dyes.', 'Johnsons', 'active'),
-  ('aa000001-0000-0000-0000-00000000001f', 'ca000001-0000-0000-0000-00000000000b', 'Classmate Notebook 180 Pages', 'classmate-notebook-180pg', 'Single-line ruled long notebook. Smooth writing paper, durable cover.', 'Classmate', 'active'),
-  ('aa000001-0000-0000-0000-000000000020', 'ca000001-0000-0000-0000-00000000000b', 'Cello Pinpoint Ball Pen (Pack of 10)', 'cello-pinpoint-pen-10pk', 'Fine tip 0.7mm blue ball pens. Smooth ink flow, comfortable grip.', 'Cello', 'active'),
-  ('aa000001-0000-0000-0000-000000000021', 'ca000001-0000-0000-0000-00000000000b', 'Fevicol MR 200g', 'fevicol-mr-200g', 'White adhesive for paper, craft, and school projects. Non-toxic.', 'Fevicol', 'active'),
-  ('aa000001-0000-0000-0000-000000000022', 'ca000001-0000-0000-0000-00000000000c', 'N95 Face Mask (Pack of 5)', 'n95-mask-pack-5', '5-layer filtration masks with nose clip. BIS certified for PM2.5 protection.', 'Venus', 'active'),
-  ('aa000001-0000-0000-0000-000000000023', 'ca000001-0000-0000-0000-00000000000c', 'Dettol Hand Sanitizer 200ml', 'dettol-sanitizer-200ml', 'Kills 99.9% germs without water. Original fragrance.', 'Dettol', 'active'),
-  ('aa000001-0000-0000-0000-000000000024', 'ca000001-0000-0000-0000-00000000000c', 'First Aid Kit (Basic)', 'first-aid-kit-basic', 'Compact kit with bandages, antiseptic cream, cotton, and scissors.', 'Savlon', 'active')
+  -- ═══ HOUSEKEEPING ═══
+  -- Cleaning Chemicals
+  ('aa000001-0000-0000-0000-000000000001', 'ca000002-0000-0000-0000-000000000001', 'Lizol Disinfectant Floor Cleaner 1L', 'lizol-disinfectant-1l', 'Kills 99.9% germs on floors. Citrus fragrance for lasting freshness.', 'Lizol', 'active'),
+  ('aa000001-0000-0000-0000-000000000002', 'ca000002-0000-0000-0000-000000000001', 'Dettol Surface Sanitizer 500ml', 'dettol-surface-sanitizer-500ml', 'Multi-surface disinfectant spray. No rinse required.', 'Dettol', 'active'),
+  ('aa000001-0000-0000-0000-000000000003', 'ca000002-0000-0000-0000-000000000001', 'Harpic Toilet Cleaner 750ml', 'harpic-toilet-cleaner-750ml', 'Thick formula clings to bowl surface. Removes tough stains and limescale.', 'Harpic', 'active'),
+  ('aa000001-0000-0000-0000-000000000004', 'ca000002-0000-0000-0000-000000000001', 'Colin Glass Cleaner 500ml', 'colin-glass-cleaner-500ml', 'Streak-free shine on glass and mirrors. Ammonia-based formula.', 'Colin', 'active'),
+  ('aa000001-0000-0000-0000-000000000005', 'ca000002-0000-0000-0000-000000000001', 'Odonil Room Freshener 250ml', 'odonil-room-freshener-250ml', 'Long-lasting fragrance blocks for bathrooms and small rooms.', 'Odonil', 'active'),
+  -- Cleaning Tools
+  ('aa000001-0000-0000-0000-000000000006', 'ca000002-0000-0000-0000-000000000002', 'Scotch-Brite Flat Mop Set', 'scotch-brite-flat-mop', 'Microfiber flat mop with bucket and wringer. 360-degree rotation.', 'Scotch-Brite', 'active'),
+  ('aa000001-0000-0000-0000-000000000007', 'ca000002-0000-0000-0000-000000000002', 'Gala No Dust Broom', 'gala-no-dust-broom', 'Floor broom with long bristles for effective sweeping without dust clouds.', 'Gala', 'active'),
+  ('aa000001-0000-0000-0000-000000000008', 'ca000002-0000-0000-0000-000000000002', 'Microfiber Cloth (Pack of 5)', 'microfiber-cloth-5pk', 'Super absorbent multi-purpose cleaning cloths. Machine washable.', 'Gala', 'active'),
+  ('aa000001-0000-0000-0000-000000000009', 'ca000002-0000-0000-0000-000000000002', 'Spray Bottle 500ml (Pack of 3)', 'spray-bottle-3pk', 'Durable trigger spray bottles for cleaning solutions. Adjustable nozzle.', 'Generic', 'active'),
+  -- Waste Management
+  ('aa000001-0000-0000-0000-00000000000a', 'ca000002-0000-0000-0000-000000000003', 'Dustbin 60L Pedal Type', 'dustbin-60l-pedal', 'Stainless steel pedal dustbin with removable inner bucket.', 'Parasnath', 'active'),
+  ('aa000001-0000-0000-0000-00000000000b', 'ca000002-0000-0000-0000-000000000003', 'Garbage Bags Large (Pack of 30)', 'garbage-bags-large-30pk', 'Heavy-duty biodegradable trash bags. 25x30 inch.', 'Ezee', 'active'),
+  ('aa000001-0000-0000-0000-00000000000c', 'ca000002-0000-0000-0000-000000000003', 'Toilet Paper Roll (Pack of 12)', 'toilet-paper-12pk', 'Soft 2-ply toilet tissue rolls. 200 sheets each.', 'Origami', 'active'),
+  -- Housekeeping PPE
+  ('aa000001-0000-0000-0000-00000000000d', 'ca000002-0000-0000-0000-000000000004', 'Latex Gloves Medium (Pack of 50)', 'latex-gloves-50pk', 'Powder-free disposable latex gloves for cleaning tasks.', 'Safeguard', 'active'),
+  ('aa000001-0000-0000-0000-00000000000e', 'ca000002-0000-0000-0000-000000000004', '3-Ply Face Mask (Pack of 50)', '3ply-mask-50pk', 'Disposable surgical masks with nose wire and ear loops.', 'Medi Plus', 'active'),
+
+  -- ═══ STATIONERY ═══
+  -- Writing Tools
+  ('aa000001-0000-0000-0000-00000000000f', 'ca000002-0000-0000-0000-000000000005', 'Cello Pinpoint Ball Pen (Pack of 10)', 'cello-pinpoint-10pk', 'Fine tip 0.7mm blue ball pens. Smooth ink flow.', 'Cello', 'active'),
+  ('aa000001-0000-0000-0000-000000000010', 'ca000002-0000-0000-0000-000000000005', 'Apsara Platinum Pencil (Pack of 10)', 'apsara-platinum-10pk', 'Extra-dark HB pencils with eraser tip. Break-resistant.', 'Apsara', 'active'),
+  ('aa000001-0000-0000-0000-000000000011', 'ca000002-0000-0000-0000-000000000005', 'Camlin Permanent Marker (Pack of 4)', 'camlin-marker-4pk', 'Black permanent markers. Quick-dry, fade-resistant ink.', 'Camlin', 'active'),
+  ('aa000001-0000-0000-0000-000000000012', 'ca000002-0000-0000-0000-000000000005', 'Luxor Highlighter Set (5 Colors)', 'luxor-highlighter-5pk', 'Chisel-tip fluorescent highlighters. Smudge-proof.', 'Luxor', 'active'),
+  -- Paper Products
+  ('aa000001-0000-0000-0000-000000000013', 'ca000002-0000-0000-0000-000000000006', 'Classmate Notebook 180 Pages', 'classmate-notebook-180pg', 'Single-line ruled long notebook. Smooth writing paper.', 'Classmate', 'active'),
+  ('aa000001-0000-0000-0000-000000000014', 'ca000002-0000-0000-0000-000000000006', 'Yellow Sticky Notes 3x3 (Pack of 5)', 'sticky-notes-5pk', '100 sheets per pad. Re-stickable adhesive.', 'Oddy', 'active'),
+  ('aa000001-0000-0000-0000-000000000015', 'ca000002-0000-0000-0000-000000000006', 'A4 White Envelopes (Pack of 50)', 'a4-envelopes-50pk', 'Self-seal white envelopes. 100 GSM paper.', 'Superfine', 'active'),
+  -- Office Supplies
+  ('aa000001-0000-0000-0000-000000000016', 'ca000002-0000-0000-0000-000000000007', 'Kangaro Stapler No.10', 'kangaro-stapler-no10', 'Desktop stapler with 20-sheet capacity. Includes 1000 pins.', 'Kangaro', 'active'),
+  ('aa000001-0000-0000-0000-000000000017', 'ca000002-0000-0000-0000-000000000007', 'Scotch Tape 1-inch (Pack of 6)', 'scotch-tape-6pk', 'Crystal clear adhesive tape. 25m rolls.', '3M Scotch', 'active'),
+  ('aa000001-0000-0000-0000-000000000018', 'ca000002-0000-0000-0000-000000000007', 'Paper Clips Assorted (Pack of 100)', 'paper-clips-100pk', 'Rust-free metal paper clips in assorted sizes.', 'Kangaroo', 'active'),
+  ('aa000001-0000-0000-0000-000000000019', 'ca000002-0000-0000-0000-000000000007', 'Fevicol MR White Glue 200g', 'fevicol-mr-200g', 'Non-toxic white adhesive for paper and craft projects.', 'Fevicol', 'active'),
+
+  -- ═══ SAFETY ═══
+  -- PPE
+  ('aa000001-0000-0000-0000-00000000001a', 'ca000002-0000-0000-0000-00000000000a', 'Karam Safety Helmet (White)', 'karam-helmet-white', 'ISI-certified industrial hard hat. Adjustable ratchet suspension.', 'Karam', 'active'),
+  ('aa000001-0000-0000-0000-00000000001b', 'ca000002-0000-0000-0000-00000000000a', 'Venus Safety Goggles', 'venus-safety-goggles', 'Anti-fog polycarbonate lens. Chemical splash protection.', 'Venus', 'active'),
+  ('aa000001-0000-0000-0000-00000000001c', 'ca000002-0000-0000-0000-00000000000a', '3M N95 Respirator Mask (Pack of 5)', '3m-n95-mask-5pk', '5-layer NIOSH-approved respirator. Valve for easy breathing.', '3M', 'active'),
+  ('aa000001-0000-0000-0000-00000000001d', 'ca000002-0000-0000-0000-00000000000a', 'Mallcom Safety Shoes Size 9', 'mallcom-safety-shoes-9', 'Steel-toe work boots. Anti-slip, oil-resistant sole.', 'Mallcom', 'active'),
+  ('aa000001-0000-0000-0000-00000000001e', 'ca000002-0000-0000-0000-00000000000a', 'Nitrile Gloves (Pack of 100)', 'nitrile-gloves-100pk', 'Powder-free, chemical-resistant disposable gloves.', 'Safeguard', 'active'),
+  -- Industrial Safety
+  ('aa000001-0000-0000-0000-00000000001f', 'ca000002-0000-0000-0000-00000000000b', 'ABC Fire Extinguisher 4kg', 'fire-extinguisher-4kg', 'Multi-purpose dry chemical extinguisher. ISI certified.', 'Ceasefire', 'active'),
+  ('aa000001-0000-0000-0000-000000000020', 'ca000002-0000-0000-0000-00000000000b', 'Smoke Detector (Battery Operated)', 'smoke-detector-battery', 'Photoelectric smoke alarm with 9V battery. Loud 85dB alert.', 'Honeywell', 'active'),
+  ('aa000001-0000-0000-0000-000000000021', 'ca000002-0000-0000-0000-00000000000b', 'Oil Spill Kit 20L', 'oil-spill-kit-20l', 'Absorbent pads, socks, and disposal bags for oil spills.', 'Brady', 'active'),
+  -- Road Safety
+  ('aa000001-0000-0000-0000-000000000022', 'ca000002-0000-0000-0000-00000000000c', 'Traffic Cone 750mm', 'traffic-cone-750mm', 'PVC reflective traffic cone. UV-stabilized, stackable.', 'Supreme', 'active'),
+  ('aa000001-0000-0000-0000-000000000023', 'ca000002-0000-0000-0000-00000000000c', 'Reflective Safety Jacket (Fluorescent)', 'reflective-jacket', 'High-visibility vest with 2-inch reflective strips. One-size.', 'Laxmi', 'active'),
+  ('aa000001-0000-0000-0000-000000000024', 'ca000002-0000-0000-0000-00000000000c', 'First Aid Kit (Workplace)', 'first-aid-kit-workplace', 'Wall-mountable kit with bandages, antiseptic, scissors, and more.', 'St John', 'active'),
+
+  -- ═══ SECURITY ═══
+  ('aa000001-0000-0000-0000-000000000025', 'ca000001-0000-0000-0000-000000000004', 'CP Plus Dome CCTV Camera 2MP', 'cpplus-dome-camera-2mp', 'Indoor dome camera with night vision. 1080p full HD.', 'CP Plus', 'active'),
+  ('aa000001-0000-0000-0000-000000000026', 'ca000001-0000-0000-0000-000000000004', 'Godrej Smart Lock (Biometric)', 'godrej-smart-lock', 'Fingerprint + PIN digital door lock. Battery backup.', 'Godrej', 'active'),
+  ('aa000001-0000-0000-0000-000000000027', 'ca000001-0000-0000-0000-000000000004', 'Hikvision 4-Channel DVR System', 'hikvision-4ch-dvr', '4-channel DVR with 1TB HDD. Remote mobile viewing.', 'Hikvision', 'active'),
+  ('aa000001-0000-0000-0000-000000000028', 'ca000001-0000-0000-0000-000000000004', 'Motion Sensor Alarm', 'motion-sensor-alarm', 'Infrared PIR motion detector. 120-degree coverage, 8m range.', 'Securico', 'active'),
+  ('aa000001-0000-0000-0000-000000000029', 'ca000001-0000-0000-0000-000000000004', 'Walkie Talkie Set (Pair)', 'walkie-talkie-pair', 'Long-range 5km UHF radio set. Rechargeable batteries included.', 'Motorola', 'active'),
+
+  -- ═══ OFFICE PANTRY ═══
+  -- Beverages
+  ('aa000001-0000-0000-0000-00000000002a', 'ca000002-0000-0000-0000-000000000011', 'Nescafe Classic Coffee 200g', 'nescafe-classic-200g', 'Instant coffee with bold roasted flavour. 100% pure coffee.', 'Nescafe', 'active'),
+  ('aa000001-0000-0000-0000-00000000002b', 'ca000002-0000-0000-0000-000000000011', 'Tata Tea Premium 500g', 'tata-tea-premium-500g', 'Strong CTC tea with 15% long leaves for rich flavour.', 'Tata Tea', 'active'),
+  ('aa000001-0000-0000-0000-00000000002c', 'ca000002-0000-0000-0000-000000000011', 'Amul Taaza Milk 1L', 'amul-taaza-milk-1l', 'Homogenized toned milk. Fresh daily, ideal for tea and coffee.', 'Amul', 'active'),
+  ('aa000001-0000-0000-0000-00000000002d', 'ca000002-0000-0000-0000-000000000011', 'Bisleri Water 1L (Pack of 12)', 'bisleri-water-12pk', 'Purified drinking water. 10-step purification process.', 'Bisleri', 'active'),
+  ('aa000001-0000-0000-0000-00000000002e', 'ca000002-0000-0000-0000-000000000011', 'Real Mixed Fruit Juice 1L', 'real-juice-1l', 'No added sugar fruit juice blend. Rich in vitamins.', 'Real', 'active'),
+  -- Snacks
+  ('aa000001-0000-0000-0000-00000000002f', 'ca000002-0000-0000-0000-000000000012', 'Yoga Bar Protein Bar (Pack of 6)', 'yoga-bar-protein-6pk', '20g protein per bar. Almond fudge flavour. No preservatives.', 'Yoga Bar', 'active'),
+  ('aa000001-0000-0000-0000-000000000030', 'ca000002-0000-0000-0000-000000000012', 'Happilo Almonds 200g', 'happilo-almonds-200g', 'Premium California almonds. Rich in Vitamin E and fiber.', 'Happilo', 'active'),
+  ('aa000001-0000-0000-0000-000000000031', 'ca000002-0000-0000-0000-000000000012', 'Parle-G Gold Biscuits 1kg', 'parle-g-gold-1kg', 'Premium glucose biscuits with extra milk. Value pack.', 'Parle', 'active'),
+  ('aa000001-0000-0000-0000-000000000032', 'ca000002-0000-0000-0000-000000000012', 'Lays Classic Salted 52g (Pack of 10)', 'lays-classic-10pk', 'Crispy potato chips. Perfect for tea-time snacking.', 'Lays', 'active'),
+
+  -- ═══ SPORTS ═══
+  -- Team Sports
+  ('aa000001-0000-0000-0000-000000000033', 'ca000002-0000-0000-0000-00000000000d', 'Nivia Storm Football Size 5', 'nivia-storm-football-5', 'Machine-stitched PVC football. FIFA basic certified.', 'Nivia', 'active'),
+  ('aa000001-0000-0000-0000-000000000034', 'ca000002-0000-0000-0000-00000000000d', 'Cosco Basketball Size 7', 'cosco-basketball-7', 'Composite leather outdoor basketball. Official size and weight.', 'Cosco', 'active'),
+  ('aa000001-0000-0000-0000-000000000035', 'ca000002-0000-0000-0000-00000000000d', 'SG Cricket Bat (Kashmir Willow)', 'sg-cricket-bat-kashmir', 'Full-size Kashmir willow bat. Short handle, thick edges.', 'SG', 'active'),
+  -- Fitness
+  ('aa000001-0000-0000-0000-000000000036', 'ca000002-0000-0000-0000-00000000000e', 'Kore PVC Dumbbell Set 10kg', 'kore-dumbbell-10kg', 'PVC-coated dumbbells with anti-slip grip. 2x5kg set.', 'Kore', 'active'),
+  ('aa000001-0000-0000-0000-000000000037', 'ca000002-0000-0000-0000-00000000000e', 'Boldfit Yoga Mat 6mm', 'boldfit-yoga-mat-6mm', 'Anti-slip EVA foam mat. Lightweight and portable.', 'Boldfit', 'active'),
+  ('aa000001-0000-0000-0000-000000000038', 'ca000002-0000-0000-0000-00000000000e', 'Resistance Bands Set (5 Levels)', 'resistance-bands-5pk', 'Latex-free exercise bands. Light to extra-heavy.', 'Boldfit', 'active'),
+  -- Protective Gear
+  ('aa000001-0000-0000-0000-000000000039', 'ca000002-0000-0000-0000-00000000000f', 'Yonex Badminton Shoes Size 9', 'yonex-shoes-9', 'Non-marking sole with power cushion technology.', 'Yonex', 'active'),
+  ('aa000001-0000-0000-0000-00000000003a', 'ca000002-0000-0000-0000-00000000000f', 'SG Cricket Helmet (Medium)', 'sg-cricket-helmet-m', 'Steel grille face guard. High-density foam padding.', 'SG', 'active')
 on conflict (id) do nothing;
 
--- ─── Product Variants (SKU, price, unit) ────────────────────────────────────
--- Schema: id, product_id, sku, unit, price, is_active
--- (pack_size, compare_at_price, tax_rate, min_order_quantity, weight_grams, attributes are optional)
+-- ─── Product Variants ───────────────────────────────────────────────────────
 
 insert into public.product_variants (id, product_id, sku, unit, price, is_active)
 values
-  ('bb000001-0000-0000-0000-000000000001', 'aa000001-0000-0000-0000-000000000001', 'FRU-BAN-DZN', '1 dozen', 49.00, true),
-  ('bb000001-0000-0000-0000-000000000002', 'aa000001-0000-0000-0000-000000000002', 'FRU-TOM-500', '500 g', 42.00, true),
-  ('bb000001-0000-0000-0000-000000000003', 'aa000001-0000-0000-0000-000000000003', 'FRU-SPN-200', '200 g', 55.00, true),
-  ('bb000001-0000-0000-0000-000000000004', 'aa000001-0000-0000-0000-000000000004', 'DAI-MLK-1L', '1 L', 68.00, true),
-  ('bb000001-0000-0000-0000-000000000005', 'aa000001-0000-0000-0000-000000000005', 'DAI-BRD-400', '400 g', 45.00, true),
-  ('bb000001-0000-0000-0000-000000000006', 'aa000001-0000-0000-0000-000000000006', 'DAI-EGG-12', '12 pcs', 96.00, true),
-  ('bb000001-0000-0000-0000-000000000007', 'aa000001-0000-0000-0000-000000000007', 'SNK-LAY-52', '52 g', 20.00, true),
-  ('bb000001-0000-0000-0000-000000000008', 'aa000001-0000-0000-0000-000000000008', 'SNK-HAL-400', '400 g', 160.00, true),
-  ('bb000001-0000-0000-0000-000000000009', 'aa000001-0000-0000-0000-000000000009', 'SNK-PRL-100', '100 g', 15.00, true),
-  ('bb000001-0000-0000-0000-00000000000a', 'aa000001-0000-0000-0000-00000000000a', 'DRK-COK-750', '750 ml', 45.00, true),
-  ('bb000001-0000-0000-0000-00000000000b', 'aa000001-0000-0000-0000-00000000000b', 'DRK-REL-1L', '1 L', 110.00, true),
-  ('bb000001-0000-0000-0000-00000000000c', 'aa000001-0000-0000-0000-00000000000c', 'DRK-PBT-200', '200 ml', 30.00, true),
-  ('bb000001-0000-0000-0000-00000000000d', 'aa000001-0000-0000-0000-00000000000d', 'BRK-KEL-475', '475 g', 195.00, true),
-  ('bb000001-0000-0000-0000-00000000000e', 'aa000001-0000-0000-0000-00000000000e', 'BRK-MAG-4PK', '4 x 70 g', 56.00, true),
-  ('bb000001-0000-0000-0000-00000000000f', 'aa000001-0000-0000-0000-00000000000f', 'BRK-QKR-1KG', '1 kg', 210.00, true),
-  ('bb000001-0000-0000-0000-000000000010', 'aa000001-0000-0000-0000-000000000010', 'GRN-ATA-5KG', '5 kg', 285.00, true),
-  ('bb000001-0000-0000-0000-000000000011', 'aa000001-0000-0000-0000-000000000011', 'GRN-RIC-1KG', '1 kg', 195.00, true),
-  ('bb000001-0000-0000-0000-000000000012', 'aa000001-0000-0000-0000-000000000012', 'GRN-DAL-1KG', '1 kg', 155.00, true),
-  ('bb000001-0000-0000-0000-000000000013', 'aa000001-0000-0000-0000-000000000013', 'TEA-TAT-500', '500 g', 290.00, true),
-  ('bb000001-0000-0000-0000-000000000014', 'aa000001-0000-0000-0000-000000000014', 'TEA-NES-100', '100 g', 245.00, true),
-  ('bb000001-0000-0000-0000-000000000015', 'aa000001-0000-0000-0000-000000000015', 'TEA-BVT-500', '500 g', 260.00, true),
-  ('bb000001-0000-0000-0000-000000000016', 'aa000001-0000-0000-0000-000000000016', 'CLN-SRF-1L', '1 L', 225.00, true),
-  ('bb000001-0000-0000-0000-000000000017', 'aa000001-0000-0000-0000-000000000017', 'CLN-LZL-500', '500 ml', 115.00, true),
-  ('bb000001-0000-0000-0000-000000000018', 'aa000001-0000-0000-0000-000000000018', 'CLN-VIM-200', '200 g', 25.00, true),
-  ('bb000001-0000-0000-0000-000000000019', 'aa000001-0000-0000-0000-000000000019', 'PER-DOV-100', '100 g', 65.00, true),
-  ('bb000001-0000-0000-0000-00000000001a', 'aa000001-0000-0000-0000-00000000001a', 'PER-HNS-340', '340 ml', 350.00, true),
-  ('bb000001-0000-0000-0000-00000000001b', 'aa000001-0000-0000-0000-00000000001b', 'PER-CLG-150', '150 g', 99.00, true),
-  ('bb000001-0000-0000-0000-00000000001c', 'aa000001-0000-0000-0000-00000000001c', 'BBY-PMP-M20', '20 pcs', 499.00, true),
-  ('bb000001-0000-0000-0000-00000000001d', 'aa000001-0000-0000-0000-00000000001d', 'BBY-CRL-300', '300 g', 275.00, true),
-  ('bb000001-0000-0000-0000-00000000001e', 'aa000001-0000-0000-0000-00000000001e', 'BBY-JWP-80', '80 pcs', 185.00, true),
-  ('bb000001-0000-0000-0000-00000000001f', 'aa000001-0000-0000-0000-00000000001f', 'STA-CLM-180', '180 pages', 60.00, true),
-  ('bb000001-0000-0000-0000-000000000020', 'aa000001-0000-0000-0000-000000000020', 'STA-CEL-10P', '10 pcs', 80.00, true),
-  ('bb000001-0000-0000-0000-000000000021', 'aa000001-0000-0000-0000-000000000021', 'STA-FEV-200', '200 g', 45.00, true),
-  ('bb000001-0000-0000-0000-000000000022', 'aa000001-0000-0000-0000-000000000022', 'SAF-N95-5PK', '5 pcs', 199.00, true),
-  ('bb000001-0000-0000-0000-000000000023', 'aa000001-0000-0000-0000-000000000023', 'SAF-DET-200', '200 ml', 99.00, true),
-  ('bb000001-0000-0000-0000-000000000024', 'aa000001-0000-0000-0000-000000000024', 'SAF-FAK-BSC', '1 kit', 349.00, true)
+  -- Housekeeping - Chemicals
+  ('bb000001-0000-0000-0000-000000000001', 'aa000001-0000-0000-0000-000000000001', 'HK-LZL-1L', '1 L', 185.00, true),
+  ('bb000001-0000-0000-0000-000000000002', 'aa000001-0000-0000-0000-000000000002', 'HK-DET-500', '500 ml', 215.00, true),
+  ('bb000001-0000-0000-0000-000000000003', 'aa000001-0000-0000-0000-000000000003', 'HK-HRP-750', '750 ml', 125.00, true),
+  ('bb000001-0000-0000-0000-000000000004', 'aa000001-0000-0000-0000-000000000004', 'HK-CLN-500', '500 ml', 99.00, true),
+  ('bb000001-0000-0000-0000-000000000005', 'aa000001-0000-0000-0000-000000000005', 'HK-ODN-250', '250 ml', 75.00, true),
+  -- Housekeeping - Tools
+  ('bb000001-0000-0000-0000-000000000006', 'aa000001-0000-0000-0000-000000000006', 'HK-MOP-SET', '1 set', 1299.00, true),
+  ('bb000001-0000-0000-0000-000000000007', 'aa000001-0000-0000-0000-000000000007', 'HK-BRM-001', '1 pc', 249.00, true),
+  ('bb000001-0000-0000-0000-000000000008', 'aa000001-0000-0000-0000-000000000008', 'HK-MCF-5PK', '5 pcs', 199.00, true),
+  ('bb000001-0000-0000-0000-000000000009', 'aa000001-0000-0000-0000-000000000009', 'HK-SPR-3PK', '3 pcs', 149.00, true),
+  -- Waste Management
+  ('bb000001-0000-0000-0000-00000000000a', 'aa000001-0000-0000-0000-00000000000a', 'HK-BIN-60L', '1 pc', 1850.00, true),
+  ('bb000001-0000-0000-0000-00000000000b', 'aa000001-0000-0000-0000-00000000000b', 'HK-BAG-30P', '30 pcs', 120.00, true),
+  ('bb000001-0000-0000-0000-00000000000c', 'aa000001-0000-0000-0000-00000000000c', 'HK-TPR-12P', '12 rolls', 320.00, true),
+  -- Housekeeping PPE
+  ('bb000001-0000-0000-0000-00000000000d', 'aa000001-0000-0000-0000-00000000000d', 'HK-GLV-50P', '50 pcs', 350.00, true),
+  ('bb000001-0000-0000-0000-00000000000e', 'aa000001-0000-0000-0000-00000000000e', 'HK-MSK-50P', '50 pcs', 199.00, true),
+
+  -- Stationery - Writing
+  ('bb000001-0000-0000-0000-00000000000f', 'aa000001-0000-0000-0000-00000000000f', 'ST-PEN-10P', '10 pcs', 80.00, true),
+  ('bb000001-0000-0000-0000-000000000010', 'aa000001-0000-0000-0000-000000000010', 'ST-PCL-10P', '10 pcs', 45.00, true),
+  ('bb000001-0000-0000-0000-000000000011', 'aa000001-0000-0000-0000-000000000011', 'ST-MRK-4PK', '4 pcs', 160.00, true),
+  ('bb000001-0000-0000-0000-000000000012', 'aa000001-0000-0000-0000-000000000012', 'ST-HLT-5PK', '5 pcs', 125.00, true),
+  -- Stationery - Paper
+  ('bb000001-0000-0000-0000-000000000013', 'aa000001-0000-0000-0000-000000000013', 'ST-NTB-180', '180 pages', 60.00, true),
+  ('bb000001-0000-0000-0000-000000000014', 'aa000001-0000-0000-0000-000000000014', 'ST-STK-5PK', '5 pads', 110.00, true),
+  ('bb000001-0000-0000-0000-000000000015', 'aa000001-0000-0000-0000-000000000015', 'ST-ENV-50P', '50 pcs', 180.00, true),
+  -- Stationery - Office Supplies
+  ('bb000001-0000-0000-0000-000000000016', 'aa000001-0000-0000-0000-000000000016', 'ST-STP-N10', '1 pc', 195.00, true),
+  ('bb000001-0000-0000-0000-000000000017', 'aa000001-0000-0000-0000-000000000017', 'ST-TPE-6PK', '6 rolls', 210.00, true),
+  ('bb000001-0000-0000-0000-000000000018', 'aa000001-0000-0000-0000-000000000018', 'ST-CLP-100', '100 pcs', 35.00, true),
+  ('bb000001-0000-0000-0000-000000000019', 'aa000001-0000-0000-0000-000000000019', 'ST-FEV-200', '200 g', 45.00, true),
+
+  -- Safety - PPE
+  ('bb000001-0000-0000-0000-00000000001a', 'aa000001-0000-0000-0000-00000000001a', 'SF-HLM-WHT', '1 pc', 450.00, true),
+  ('bb000001-0000-0000-0000-00000000001b', 'aa000001-0000-0000-0000-00000000001b', 'SF-GOG-001', '1 pc', 320.00, true),
+  ('bb000001-0000-0000-0000-00000000001c', 'aa000001-0000-0000-0000-00000000001c', 'SF-N95-5PK', '5 pcs', 650.00, true),
+  ('bb000001-0000-0000-0000-00000000001d', 'aa000001-0000-0000-0000-00000000001d', 'SF-SHO-S09', '1 pair', 2100.00, true),
+  ('bb000001-0000-0000-0000-00000000001e', 'aa000001-0000-0000-0000-00000000001e', 'SF-NGL-100', '100 pcs', 550.00, true),
+  -- Safety - Industrial
+  ('bb000001-0000-0000-0000-00000000001f', 'aa000001-0000-0000-0000-00000000001f', 'SF-FEX-4KG', '4 kg', 1850.00, true),
+  ('bb000001-0000-0000-0000-000000000020', 'aa000001-0000-0000-0000-000000000020', 'SF-SMK-001', '1 pc', 890.00, true),
+  ('bb000001-0000-0000-0000-000000000021', 'aa000001-0000-0000-0000-000000000021', 'SF-SPL-20L', '1 kit', 3500.00, true),
+  -- Safety - Road
+  ('bb000001-0000-0000-0000-000000000022', 'aa000001-0000-0000-0000-000000000022', 'SF-CON-750', '1 pc', 350.00, true),
+  ('bb000001-0000-0000-0000-000000000023', 'aa000001-0000-0000-0000-000000000023', 'SF-JKT-REF', '1 pc', 280.00, true),
+  ('bb000001-0000-0000-0000-000000000024', 'aa000001-0000-0000-0000-000000000024', 'SF-FAK-WRK', '1 kit', 1250.00, true),
+
+  -- Security
+  ('bb000001-0000-0000-0000-000000000025', 'aa000001-0000-0000-0000-000000000025', 'SC-CAM-2MP', '1 pc', 2450.00, true),
+  ('bb000001-0000-0000-0000-000000000026', 'aa000001-0000-0000-0000-000000000026', 'SC-LCK-BIO', '1 pc', 8999.00, true),
+  ('bb000001-0000-0000-0000-000000000027', 'aa000001-0000-0000-0000-000000000027', 'SC-DVR-4CH', '1 set', 12500.00, true),
+  ('bb000001-0000-0000-0000-000000000028', 'aa000001-0000-0000-0000-000000000028', 'SC-MOT-ALM', '1 pc', 750.00, true),
+  ('bb000001-0000-0000-0000-000000000029', 'aa000001-0000-0000-0000-000000000029', 'SC-WLK-PAR', '1 pair', 3200.00, true),
+
+  -- Office Pantry - Beverages
+  ('bb000001-0000-0000-0000-00000000002a', 'aa000001-0000-0000-0000-00000000002a', 'OP-COF-200', '200 g', 420.00, true),
+  ('bb000001-0000-0000-0000-00000000002b', 'aa000001-0000-0000-0000-00000000002b', 'OP-TEA-500', '500 g', 290.00, true),
+  ('bb000001-0000-0000-0000-00000000002c', 'aa000001-0000-0000-0000-00000000002c', 'OP-MLK-1L', '1 L', 58.00, true),
+  ('bb000001-0000-0000-0000-00000000002d', 'aa000001-0000-0000-0000-00000000002d', 'OP-WTR-12P', '12 x 1L', 240.00, true),
+  ('bb000001-0000-0000-0000-00000000002e', 'aa000001-0000-0000-0000-00000000002e', 'OP-JUC-1L', '1 L', 110.00, true),
+  -- Office Pantry - Snacks
+  ('bb000001-0000-0000-0000-00000000002f', 'aa000001-0000-0000-0000-00000000002f', 'OP-BAR-6PK', '6 bars', 540.00, true),
+  ('bb000001-0000-0000-0000-000000000030', 'aa000001-0000-0000-0000-000000000030', 'OP-ALM-200', '200 g', 320.00, true),
+  ('bb000001-0000-0000-0000-000000000031', 'aa000001-0000-0000-0000-000000000031', 'OP-BSC-1KG', '1 kg', 150.00, true),
+  ('bb000001-0000-0000-0000-000000000032', 'aa000001-0000-0000-0000-000000000032', 'OP-CHP-10P', '10 x 52g', 200.00, true),
+
+  -- Sports - Team
+  ('bb000001-0000-0000-0000-000000000033', 'aa000001-0000-0000-0000-000000000033', 'SP-FBL-S05', '1 pc', 699.00, true),
+  ('bb000001-0000-0000-0000-000000000034', 'aa000001-0000-0000-0000-000000000034', 'SP-BBL-S07', '1 pc', 850.00, true),
+  ('bb000001-0000-0000-0000-000000000035', 'aa000001-0000-0000-0000-000000000035', 'SP-BAT-KSH', '1 pc', 1450.00, true),
+  -- Sports - Fitness
+  ('bb000001-0000-0000-0000-000000000036', 'aa000001-0000-0000-0000-000000000036', 'SP-DMB-10K', '1 set', 999.00, true),
+  ('bb000001-0000-0000-0000-000000000037', 'aa000001-0000-0000-0000-000000000037', 'SP-YGA-6MM', '1 pc', 499.00, true),
+  ('bb000001-0000-0000-0000-000000000038', 'aa000001-0000-0000-0000-000000000038', 'SP-RBD-5PK', '5 bands', 450.00, true),
+  -- Sports - Protective
+  ('bb000001-0000-0000-0000-000000000039', 'aa000001-0000-0000-0000-000000000039', 'SP-SHO-S09', '1 pair', 3200.00, true),
+  ('bb000001-0000-0000-0000-00000000003a', 'aa000001-0000-0000-0000-00000000003a', 'SP-HLM-CKT', '1 pc', 1800.00, true)
 on conflict (id) do nothing;
 
 -- ─── Inventory Location ─────────────────────────────────────────────────────
--- Schema: id, code, name, address(jsonb), is_active
 
 insert into public.inventory_locations (id, code, name, is_active)
 values
-  ('dd000001-0000-0000-0000-000000000001', 'WH-MAIN', 'Main Warehouse', true),
-  ('dd000001-0000-0000-0000-000000000002', 'WH-COLD', 'Cold Storage Unit', true)
+  ('dd000001-0000-0000-0000-000000000001', 'WH-MAIN', 'Main Warehouse', true)
 on conflict (id) do nothing;
 
 -- ─── Inventory Stock ────────────────────────────────────────────────────────
--- Schema: variant_id, location_id, quantity_on_hand, quantity_reserved, reorder_level
--- PK is (variant_id, location_id)
 
 insert into public.inventory (variant_id, location_id, quantity_on_hand, quantity_reserved, reorder_level)
 values
-  ('bb000001-0000-0000-0000-000000000001', 'dd000001-0000-0000-0000-000000000001', 120, 0, 20),
-  ('bb000001-0000-0000-0000-000000000002', 'dd000001-0000-0000-0000-000000000001', 85, 0, 15),
-  ('bb000001-0000-0000-0000-000000000003', 'dd000001-0000-0000-0000-000000000001', 60, 0, 10),
-  ('bb000001-0000-0000-0000-000000000004', 'dd000001-0000-0000-0000-000000000002', 200, 0, 30),
-  ('bb000001-0000-0000-0000-000000000005', 'dd000001-0000-0000-0000-000000000001', 75, 0, 15),
-  ('bb000001-0000-0000-0000-000000000006', 'dd000001-0000-0000-0000-000000000002', 150, 0, 25),
-  ('bb000001-0000-0000-0000-000000000007', 'dd000001-0000-0000-0000-000000000001', 300, 0, 50),
-  ('bb000001-0000-0000-0000-000000000008', 'dd000001-0000-0000-0000-000000000001', 90, 0, 15),
-  ('bb000001-0000-0000-0000-000000000009', 'dd000001-0000-0000-0000-000000000001', 250, 0, 40),
-  ('bb000001-0000-0000-0000-00000000000a', 'dd000001-0000-0000-0000-000000000001', 180, 0, 30),
-  ('bb000001-0000-0000-0000-00000000000b', 'dd000001-0000-0000-0000-000000000001', 100, 0, 20),
-  ('bb000001-0000-0000-0000-00000000000c', 'dd000001-0000-0000-0000-000000000001', 200, 0, 40),
-  ('bb000001-0000-0000-0000-00000000000d', 'dd000001-0000-0000-0000-000000000001', 65, 0, 10),
-  ('bb000001-0000-0000-0000-00000000000e', 'dd000001-0000-0000-0000-000000000001', 400, 0, 60),
-  ('bb000001-0000-0000-0000-00000000000f', 'dd000001-0000-0000-0000-000000000001', 55, 0, 10),
-  ('bb000001-0000-0000-0000-000000000010', 'dd000001-0000-0000-0000-000000000001', 40, 0, 8),
-  ('bb000001-0000-0000-0000-000000000011', 'dd000001-0000-0000-0000-000000000001', 70, 0, 12),
-  ('bb000001-0000-0000-0000-000000000012', 'dd000001-0000-0000-0000-000000000001', 90, 0, 15),
-  ('bb000001-0000-0000-0000-000000000013', 'dd000001-0000-0000-0000-000000000001', 80, 0, 12),
-  ('bb000001-0000-0000-0000-000000000014', 'dd000001-0000-0000-0000-000000000001', 95, 0, 15),
-  ('bb000001-0000-0000-0000-000000000015', 'dd000001-0000-0000-0000-000000000001', 70, 0, 10),
-  ('bb000001-0000-0000-0000-000000000016', 'dd000001-0000-0000-0000-000000000001', 45, 0, 8),
-  ('bb000001-0000-0000-0000-000000000017', 'dd000001-0000-0000-0000-000000000001', 110, 0, 20),
-  ('bb000001-0000-0000-0000-000000000018', 'dd000001-0000-0000-0000-000000000001', 200, 0, 35),
-  ('bb000001-0000-0000-0000-000000000019', 'dd000001-0000-0000-0000-000000000001', 150, 0, 25),
+  ('bb000001-0000-0000-0000-000000000001', 'dd000001-0000-0000-0000-000000000001', 150, 0, 20),
+  ('bb000001-0000-0000-0000-000000000002', 'dd000001-0000-0000-0000-000000000001', 100, 0, 15),
+  ('bb000001-0000-0000-0000-000000000003', 'dd000001-0000-0000-0000-000000000001', 120, 0, 15),
+  ('bb000001-0000-0000-0000-000000000004', 'dd000001-0000-0000-0000-000000000001', 80, 0, 10),
+  ('bb000001-0000-0000-0000-000000000005', 'dd000001-0000-0000-0000-000000000001', 200, 0, 30),
+  ('bb000001-0000-0000-0000-000000000006', 'dd000001-0000-0000-0000-000000000001', 25, 0, 5),
+  ('bb000001-0000-0000-0000-000000000007', 'dd000001-0000-0000-0000-000000000001', 60, 0, 10),
+  ('bb000001-0000-0000-0000-000000000008', 'dd000001-0000-0000-0000-000000000001', 200, 0, 30),
+  ('bb000001-0000-0000-0000-000000000009', 'dd000001-0000-0000-0000-000000000001', 150, 0, 25),
+  ('bb000001-0000-0000-0000-00000000000a', 'dd000001-0000-0000-0000-000000000001', 15, 0, 3),
+  ('bb000001-0000-0000-0000-00000000000b', 'dd000001-0000-0000-0000-000000000001', 300, 0, 50),
+  ('bb000001-0000-0000-0000-00000000000c', 'dd000001-0000-0000-0000-000000000001', 180, 0, 25),
+  ('bb000001-0000-0000-0000-00000000000d', 'dd000001-0000-0000-0000-000000000001', 400, 0, 60),
+  ('bb000001-0000-0000-0000-00000000000e', 'dd000001-0000-0000-0000-000000000001', 500, 0, 80),
+  ('bb000001-0000-0000-0000-00000000000f', 'dd000001-0000-0000-0000-000000000001', 350, 0, 50),
+  ('bb000001-0000-0000-0000-000000000010', 'dd000001-0000-0000-0000-000000000001', 400, 0, 60),
+  ('bb000001-0000-0000-0000-000000000011', 'dd000001-0000-0000-0000-000000000001', 200, 0, 30),
+  ('bb000001-0000-0000-0000-000000000012', 'dd000001-0000-0000-0000-000000000001', 150, 0, 20),
+  ('bb000001-0000-0000-0000-000000000013', 'dd000001-0000-0000-0000-000000000001', 250, 0, 35),
+  ('bb000001-0000-0000-0000-000000000014', 'dd000001-0000-0000-0000-000000000001', 180, 0, 25),
+  ('bb000001-0000-0000-0000-000000000015', 'dd000001-0000-0000-0000-000000000001', 100, 0, 15),
+  ('bb000001-0000-0000-0000-000000000016', 'dd000001-0000-0000-0000-000000000001', 80, 0, 10),
+  ('bb000001-0000-0000-0000-000000000017', 'dd000001-0000-0000-0000-000000000001', 300, 0, 40),
+  ('bb000001-0000-0000-0000-000000000018', 'dd000001-0000-0000-0000-000000000001', 500, 0, 70),
+  ('bb000001-0000-0000-0000-000000000019', 'dd000001-0000-0000-0000-000000000001', 200, 0, 30),
   ('bb000001-0000-0000-0000-00000000001a', 'dd000001-0000-0000-0000-000000000001', 60, 0, 10),
-  ('bb000001-0000-0000-0000-00000000001b', 'dd000001-0000-0000-0000-000000000001', 130, 0, 20),
-  ('bb000001-0000-0000-0000-00000000001c', 'dd000001-0000-0000-0000-000000000001', 50, 0, 8),
-  ('bb000001-0000-0000-0000-00000000001d', 'dd000001-0000-0000-0000-000000000001', 40, 0, 8),
-  ('bb000001-0000-0000-0000-00000000001e', 'dd000001-0000-0000-0000-000000000001', 75, 0, 12),
-  ('bb000001-0000-0000-0000-00000000001f', 'dd000001-0000-0000-0000-000000000001', 200, 0, 30),
-  ('bb000001-0000-0000-0000-000000000020', 'dd000001-0000-0000-0000-000000000001', 300, 0, 50),
-  ('bb000001-0000-0000-0000-000000000021', 'dd000001-0000-0000-0000-000000000001', 150, 0, 25),
-  ('bb000001-0000-0000-0000-000000000022', 'dd000001-0000-0000-0000-000000000001', 100, 0, 15),
-  ('bb000001-0000-0000-0000-000000000023', 'dd000001-0000-0000-0000-000000000001', 180, 0, 25),
-  ('bb000001-0000-0000-0000-000000000024', 'dd000001-0000-0000-0000-000000000001', 35, 0, 5)
+  ('bb000001-0000-0000-0000-00000000001b', 'dd000001-0000-0000-0000-000000000001', 75, 0, 10),
+  ('bb000001-0000-0000-0000-00000000001c', 'dd000001-0000-0000-0000-000000000001', 100, 0, 15),
+  ('bb000001-0000-0000-0000-00000000001d', 'dd000001-0000-0000-0000-000000000001', 30, 0, 5),
+  ('bb000001-0000-0000-0000-00000000001e', 'dd000001-0000-0000-0000-000000000001', 250, 0, 35),
+  ('bb000001-0000-0000-0000-00000000001f', 'dd000001-0000-0000-0000-000000000001', 20, 0, 3),
+  ('bb000001-0000-0000-0000-000000000020', 'dd000001-0000-0000-0000-000000000001', 40, 0, 5),
+  ('bb000001-0000-0000-0000-000000000021', 'dd000001-0000-0000-0000-000000000001', 15, 0, 3),
+  ('bb000001-0000-0000-0000-000000000022', 'dd000001-0000-0000-0000-000000000001', 90, 0, 15),
+  ('bb000001-0000-0000-0000-000000000023', 'dd000001-0000-0000-0000-000000000001', 120, 0, 20),
+  ('bb000001-0000-0000-0000-000000000024', 'dd000001-0000-0000-0000-000000000001', 35, 0, 5),
+  ('bb000001-0000-0000-0000-000000000025', 'dd000001-0000-0000-0000-000000000001', 40, 0, 5),
+  ('bb000001-0000-0000-0000-000000000026', 'dd000001-0000-0000-0000-000000000001', 15, 0, 3),
+  ('bb000001-0000-0000-0000-000000000027', 'dd000001-0000-0000-0000-000000000001', 10, 0, 2),
+  ('bb000001-0000-0000-0000-000000000028', 'dd000001-0000-0000-0000-000000000001', 50, 0, 8),
+  ('bb000001-0000-0000-0000-000000000029', 'dd000001-0000-0000-0000-000000000001', 20, 0, 3),
+  ('bb000001-0000-0000-0000-00000000002a', 'dd000001-0000-0000-0000-000000000001', 90, 0, 12),
+  ('bb000001-0000-0000-0000-00000000002b', 'dd000001-0000-0000-0000-000000000001', 80, 0, 10),
+  ('bb000001-0000-0000-0000-00000000002c', 'dd000001-0000-0000-0000-000000000001', 200, 0, 30),
+  ('bb000001-0000-0000-0000-00000000002d', 'dd000001-0000-0000-0000-000000000001', 50, 0, 8),
+  ('bb000001-0000-0000-0000-00000000002e', 'dd000001-0000-0000-0000-000000000001', 70, 0, 10),
+  ('bb000001-0000-0000-0000-00000000002f', 'dd000001-0000-0000-0000-000000000001', 60, 0, 8),
+  ('bb000001-0000-0000-0000-000000000030', 'dd000001-0000-0000-0000-000000000001', 100, 0, 15),
+  ('bb000001-0000-0000-0000-000000000031', 'dd000001-0000-0000-0000-000000000001', 40, 0, 5),
+  ('bb000001-0000-0000-0000-000000000032', 'dd000001-0000-0000-0000-000000000001', 80, 0, 10),
+  ('bb000001-0000-0000-0000-000000000033', 'dd000001-0000-0000-0000-000000000001', 30, 0, 5),
+  ('bb000001-0000-0000-0000-000000000034', 'dd000001-0000-0000-0000-000000000001', 25, 0, 4),
+  ('bb000001-0000-0000-0000-000000000035', 'dd000001-0000-0000-0000-000000000001', 20, 0, 3),
+  ('bb000001-0000-0000-0000-000000000036', 'dd000001-0000-0000-0000-000000000001', 35, 0, 5),
+  ('bb000001-0000-0000-0000-000000000037', 'dd000001-0000-0000-0000-000000000001', 50, 0, 8),
+  ('bb000001-0000-0000-0000-000000000038', 'dd000001-0000-0000-0000-000000000001', 75, 0, 10),
+  ('bb000001-0000-0000-0000-000000000039', 'dd000001-0000-0000-0000-000000000001', 20, 0, 3),
+  ('bb000001-0000-0000-0000-00000000003a', 'dd000001-0000-0000-0000-000000000001', 15, 0, 3)
 on conflict (variant_id, location_id) do nothing;
 
 commit;

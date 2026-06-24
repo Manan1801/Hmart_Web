@@ -71,7 +71,7 @@ export function CategoryForm({
         <span className="text-sm font-medium text-zinc-800">Image URL</span>
         <input
           className="mt-2 h-10 w-full rounded-md border border-zinc-300 px-3 text-sm outline-none transition-colors focus:border-zinc-950"
-          defaultValue={category?.image_url ?? ""}
+          defaultValue={(category as any)?.image_url ?? ""}
           maxLength={2000}
           name="imageUrl"
           placeholder="https://example.com/category.jpg"

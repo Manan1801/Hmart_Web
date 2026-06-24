@@ -17,7 +17,6 @@ type CategoryMutationInput = {
   name: string;
   slug: string;
   description: string | null;
-  image_url: string | null;
   parent_id: string | null;
   sort_order: number;
   is_active: boolean;
@@ -133,7 +132,6 @@ function validateCategoryForm(
       name,
       slug,
       description,
-      image_url: imageUrl,
       parent_id: parentId,
       sort_order: sortOrder,
       is_active: isActive,

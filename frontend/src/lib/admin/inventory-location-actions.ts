@@ -16,7 +16,6 @@ export const initialInventoryActionState: InventoryActionState = {
 type LocationMutationInput = {
   name: string;
   code: string;
-  description: string | null;
   is_active: boolean;
 };
 
@@ -76,7 +75,6 @@ function validateLocationForm(formData: FormData): LocationValidationResult {
     data: {
       name,
       code,
-      description,
       is_active: isActive,
     },
   };

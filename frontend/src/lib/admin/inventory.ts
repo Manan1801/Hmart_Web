@@ -20,7 +20,6 @@ export type InventoryLocationRow = {
   id: string;
   name: string;
   code: string;
-  description: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -136,7 +135,7 @@ export async function getInventoryLocations({
   let query = supabase
     .from("inventory_locations")
     .select(
-      "id, name, code, description, is_active, created_at, updated_at",
+      "id, name, code, is_active, created_at, updated_at",
       { count: "exact" },
     )
     .is("deleted_at", null)
