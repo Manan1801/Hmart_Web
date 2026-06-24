@@ -27,11 +27,15 @@ export async function getUserRoles(userId?: string): Promise<AuthRole[]> {
   const supabase = await createClient();
   const resolvedUserId = userId ?? (await requireUser()).id;
 
+  console.log("USER ID:", resolvedUserId);
+
   const { data, error } = await supabase
     .from("user_roles")
     .select("roles(code)")
-    .eq("user_id", resolvedUserId)
-    .returns<UserRoleRow[]>();
+    .eq("user_id", resolvedUserId);
+
+  console.log("ROLE DATA:", data);
+  console.log("ROLE ERROR:", error);
 
   if (error) {
     throw new Error(`Unable to load user roles: ${error.message}`);

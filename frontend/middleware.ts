@@ -84,12 +84,25 @@ export async function middleware(request: NextRequest) {
   if (protectedRoute.allowedRoles) {
     const { data: roleRows, error } = await supabase
       .from("user_roles")
-      .select("roles(code)")
-      .eq("user_id", userId)
-      .returns<UserRoleRow[]>();
-
-    if (error || !hasAllowedRole(roleRows, protectedRoute.allowedRoles)) {
-      return NextResponse.redirect(new URL("/unauthorized", request.url));
+      .select("role_id")
+      .eq("user_id", userId);
+  
+    console.log("RAW USER ROLES:", roleRows);
+    console.log("RAW ERROR:", error);
+  
+    const ADMIN_ROLE_ID = "e2342b12-1e48-4bea-8bb3-d199a02971f9";
+  
+    const isAdmin =
+      roleRows?.some(
+        (row) => row.role_id === ADMIN_ROLE_ID
+      ) ?? false;
+  
+    console.log("IS ADMIN:", isAdmin);
+  
+    if (error || !isAdmin) {
+      return NextResponse.redirect(
+        new URL("/unauthorized", request.url)
+      );
     }
   }
 
