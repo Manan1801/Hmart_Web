@@ -116,7 +116,7 @@ function CartLineItem({
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 sm:items-end">
+      <div className="flex flex-col gap-3 sm:items-end">
         <div className="text-left sm:text-right">
           <p className="text-sm text-zinc-600">{formatCurrency(item.price)} each</p>
           <p className="mt-1 text-base font-semibold text-zinc-950">
@@ -124,44 +124,34 @@ function CartLineItem({
           </p>
         </div>
 
-        <div className="flex h-10 w-fit items-center rounded-md border border-zinc-300 bg-white">
+        <div className="inline-flex h-9 items-center rounded-full bg-green-600 shadow-sm">
           <button
-            className="h-full w-10 text-lg text-zinc-700 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:text-zinc-300"
+            className="flex h-full w-9 items-center justify-center rounded-l-full text-white transition-colors hover:bg-green-700 disabled:opacity-50"
             disabled={isPending}
             onClick={() => onUpdate(item, item.quantity - 1)}
             type="button"
           >
-            -
+            <svg className="size-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
+            </svg>
           </button>
-          <input
-            className="h-full w-14 border-x border-zinc-300 text-center text-sm outline-none disabled:bg-zinc-50"
-            disabled={isPending}
-            key={item.quantity}
-            min={1}
-            onBlur={(event) => {
-              const nextQuantity = Number.parseInt(event.target.value, 10);
-              onUpdate(item, Number.isFinite(nextQuantity) ? nextQuantity : 1);
-            }}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                event.currentTarget.blur();
-              }
-            }}
-            type="number"
-            defaultValue={item.quantity}
-          />
+          <span className="min-w-[28px] text-center text-sm font-bold text-white">
+            {item.quantity}
+          </span>
           <button
-            className="h-full w-10 text-lg text-zinc-700 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:text-zinc-300"
+            className="flex h-full w-9 items-center justify-center rounded-r-full text-white transition-colors hover:bg-green-700 disabled:opacity-50"
             disabled={isPending || item.quantity >= item.availableStock}
             onClick={() => onUpdate(item, item.quantity + 1)}
             type="button"
           >
-            +
+            <svg className="size-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
           </button>
         </div>
 
         <button
-          className="text-sm font-medium text-red-700 underline disabled:cursor-not-allowed disabled:text-zinc-400"
+          className="text-xs font-medium text-red-600 transition-colors hover:text-red-700 disabled:cursor-not-allowed disabled:text-zinc-400"
           disabled={isPending}
           onClick={() => onRemove(item)}
           type="button"

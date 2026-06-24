@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { LogoutButton } from "@/src/components/auth/logout-button";
 import { useAuth } from "@/src/hooks/use-auth";
-import { readLocalCart, subscribeToCartCount } from "@/src/lib/storefront/cart-storage";
-import { getCurrentCartAction, hydrateLocalCartAction } from "@/src/lib/storefront/cart-actions";
+import { readLocalCart, subscribeToCartCount, broadcastCartCount } from "@/src/lib/storefront/cart-storage";
+import { getCurrentCartAction, hydrateLocalCartAction, addCartItemAction, updateCartItemQuantityAction } from "@/src/lib/storefront/cart-actions";
 import type { StorefrontCategory } from "@/src/lib/storefront/types";
 import type { CartDisplayItem } from "@/src/lib/storefront/cart-types";
 import { formatCurrency } from "@/src/lib/storefront/format";
@@ -39,7 +39,46 @@ function XIcon({ className }: { className?: string }) {
 
 // ─── Cart panel items ─────────────────────────────────────────────────────────
 
-function CartItemRow({ item }: { item: CartDisplayItem }) {
+function CartItemRow({
+  item,
+  isAuthenticated,
+  onCartUpdate,
+}: {
+  item: CartDisplayItem;
+  isAuthenticated: boolean;
+  onCartUpdate: () => void;
+}) {
+  const [pending, setPending] = useState(false);
+  const [qty, setQty] = useState(item.quantity);
+
+  async function update(newQty: number) {
+    setPending(true);
+    try {
+      if (isAuthenticated) {
+        const result = await updateCartItemQuantityAction({
+          variantId: item.variantId,
+          quantity: newQty,
+        });
+        if (result.cart) {
+          broadcastCartCount(result.cart.summary.totalQuantity);
+          onCartUpdate();
+        }
+        if (result.status === "success") setQty(newQty);
+      } else {
+        const { updateLocalCartItem } = await import("@/src/lib/storefront/cart-storage");
+        updateLocalCartItem({
+          variantId: item.variantId,
+          quantity: newQty,
+          availableStock: item.availableStock,
+        });
+        setQty(newQty);
+        onCartUpdate();
+      }
+    } finally {
+      setPending(false);
+    }
+  }
+
   return (
     <div className="flex gap-3 py-3">
       <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
@@ -58,14 +97,32 @@ function CartItemRow({ item }: { item: CartDisplayItem }) {
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-zinc-950">{item.productName}</p>
-        <p className="text-xs text-zinc-500">
-          {item.sku}{item.unit ? ` · ${item.unit}` : ""}
-        </p>
-        <div className="mt-1 flex items-center justify-between">
-          <p className="text-xs text-zinc-500">
-            {item.quantity} × {formatCurrency(item.price)}
-          </p>
-          <p className="text-sm font-bold text-zinc-950">{formatCurrency(item.lineSubtotal)}</p>
+        <p className="text-xs text-zinc-500">{formatCurrency(item.price)}</p>
+        <div className="mt-1.5 flex items-center justify-between">
+          <div className="inline-flex h-7 items-center rounded-full bg-green-600">
+            <button
+              className="flex h-full w-7 items-center justify-center rounded-l-full text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+              disabled={pending}
+              onClick={() => update(qty - 1)}
+              type="button"
+            >
+              <svg className="size-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" />
+              </svg>
+            </button>
+            <span className="min-w-[18px] text-center text-[11px] font-bold text-white">{qty}</span>
+            <button
+              className="flex h-full w-7 items-center justify-center rounded-r-full text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+              disabled={pending || qty >= item.availableStock}
+              onClick={() => update(qty + 1)}
+              type="button"
+            >
+              <svg className="size-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+            </button>
+          </div>
+          <p className="text-sm font-bold text-zinc-950">{formatCurrency(item.price * qty)}</p>
         </div>
       </div>
     </div>
@@ -273,7 +330,7 @@ export function StorefrontHeader({
           ) : (
             <div className="divide-y divide-zinc-100 px-5">
               {cartItems.map((item) => (
-                <CartItemRow item={item} key={item.variantId} />
+                <CartItemRow item={item} isAuthenticated={isAuthenticated} key={item.variantId} onCartUpdate={openCart} />
               ))}
             </div>
           )}
