@@ -24,6 +24,8 @@ export type StorefrontProductCard = {
   imageUrl: string | null;
   imageAlt: string | null;
   inStock: boolean;
+  defaultVariantId: string | null;
+  availableStock: number;
 };
 
 export type StorefrontProductImage = {

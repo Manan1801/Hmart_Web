@@ -180,9 +180,12 @@ async function enrichProductCards(
       const images = imagesByProductId.get(product.id) ?? [];
       const primaryImage =
         images.find((image) => image.is_primary) ?? images[0] ?? null;
-      const inStock = variants.some(
-        (variant) => (stockByVariantId.get(variant.id) ?? 0) > 0,
+      const defaultVariant = variants[0] ?? null;
+      const totalStock = variants.reduce(
+        (sum, v) => sum + (stockByVariantId.get(v.id) ?? 0),
+        0,
       );
+      const inStock = totalStock > 0;
 
       return {
         id: product.id,
@@ -199,6 +202,10 @@ async function enrichProductCards(
           : null,
         imageAlt: primaryImage?.alt_text ?? product.name,
         inStock,
+        defaultVariantId: defaultVariant?.id ?? null,
+        availableStock: defaultVariant
+          ? (stockByVariantId.get(defaultVariant.id) ?? 0)
+          : 0,
       };
     });
 }
