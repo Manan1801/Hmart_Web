@@ -59,7 +59,7 @@ export function InventoryLocationForm({
         <span className="text-sm font-medium text-zinc-800">Description</span>
         <textarea
           className="mt-2 min-h-20 w-full resize-y rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none transition-colors focus:border-zinc-950"
-          defaultValue={location?.description ?? ""}
+          defaultValue={(location as any)?.description ?? ""}
           maxLength={500}
           name="description"
         />

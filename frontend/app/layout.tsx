@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { CartSessionBridge } from "@/src/components/storefront/cart-session-bridge";
+import { AppProviders } from "@/src/providers/app-providers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,8 +34,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <CartSessionBridge />
-        {children}
+        <AppProviders>
+          <CartSessionBridge />
+          {children}
+        </AppProviders>
       </body>
     </html>
   );

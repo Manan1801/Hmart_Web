@@ -151,9 +151,11 @@ function CartPanelSkeleton() {
 export function StorefrontHeader({
   categories,
   userEmail,
+  userName,
 }: {
   categories: StorefrontCategory[];
   userEmail: string | null;
+  userName?: string | null;
 }) {
   const pathname = usePathname();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -225,66 +227,96 @@ export function StorefrontHeader({
 
       {/* ── Account sidebar ───────────────────────────────────────────────── */}
       <aside
-        className={`fixed right-0 top-0 z-50 flex h-full w-72 flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out ${
+        className={`fixed right-0 top-0 z-50 flex h-full w-80 flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out ${
           sidebarOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between border-b border-zinc-100 px-6 py-5">
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-emerald-900">
-              {userEmail ? "My Account" : "Welcome to HMART"}
-            </p>
-            {userEmail && (
-              <p className="mt-0.5 truncate text-xs text-zinc-500">{userEmail}</p>
+        {/* Profile header */}
+        <div className="border-b border-zinc-100 px-5 py-5">
+          <div className="flex items-center justify-between">
+            {userEmail ? (
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-sm font-bold text-green-700">
+                  {(userName ?? userEmail).charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-zinc-950">
+                    {userName ?? userEmail.split("@")[0]}
+                  </p>
+                  <p className="truncate text-xs text-zinc-500">{userEmail}</p>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm font-semibold text-zinc-950">Welcome to HMART</p>
             )}
+            <button
+              className="shrink-0 rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+              onClick={() => setSidebarOpen(false)}
+            >
+              <XIcon className="size-5" />
+            </button>
           </div>
-          <button
-            className="ml-3 shrink-0 rounded-xl p-1.5 text-zinc-400 transition-colors hover:bg-green-50 hover:text-green-700"
-            onClick={() => setSidebarOpen(false)}
-          >
-            <XIcon className="size-5" />
-          </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-4">
+        <nav className="flex-1 overflow-y-auto">
           {userEmail ? (
-            <div className="space-y-0.5">
-              <Link className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-green-50 hover:text-green-800" href="/account">
-                <svg className="size-5 shrink-0 text-green-600/60" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                </svg>
-                Account
-              </Link>
-              <Link className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-green-50 hover:text-green-800" href="/orders">
-                <svg className="size-5 shrink-0 text-green-600/60" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
-                </svg>
-                Orders
-              </Link>
-              <Link className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-green-50 hover:text-green-800" href="/account">
-                <svg className="size-5 shrink-0 text-green-600/60" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                </svg>
-                Edit Profile
-              </Link>
-              <div className="mt-2 border-t border-zinc-100 pt-2">
-                <LogoutButton className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-600 transition-colors hover:bg-red-50" label="Sign out" />
+            <>
+              {/* Main navigation */}
+              <div className="px-3 pt-3">
+                <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-400">My Account</p>
+                <Link className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-green-50 hover:text-green-800" href="/account">
+                  <svg className="size-[18px] text-zinc-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
+                  My Profile
+                </Link>
+                <Link className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-green-50 hover:text-green-800" href="/orders">
+                  <svg className="size-[18px] text-zinc-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
+                  My Orders
+                </Link>
               </div>
-            </div>
+
+              {/* Support section */}
+              <div className="mt-2 border-t border-zinc-100 px-3 pt-3">
+                <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-400">Support</p>
+                <Link className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-green-50 hover:text-green-800" href="/contact">
+                  <svg className="size-[18px] text-zinc-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" /></svg>
+                  Contact Us
+                </Link>
+                <Link className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-green-50 hover:text-green-800" href="/refund-policy">
+                  <svg className="size-[18px] text-zinc-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" /></svg>
+                  Refund Policy
+                </Link>
+              </div>
+
+              {/* Sign out */}
+              <div className="mt-2 border-t border-zinc-100 px-3 pt-3">
+                <LogoutButton className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50" label="Sign out" />
+              </div>
+            </>
           ) : (
-            <div className="space-y-2 px-1">
-              <Link className="flex w-full items-center justify-center rounded-2xl bg-green-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-green-700" href="/login">
+            <div className="space-y-3 px-5 pt-6">
+              <p className="text-sm text-zinc-600">Sign in to track orders, manage your profile, and more.</p>
+              <Link className="flex w-full items-center justify-center rounded-xl bg-green-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-green-700" href="/login">
                 Sign in
               </Link>
-              <Link className="flex w-full items-center justify-center rounded-2xl border border-green-200 px-4 py-3 text-sm font-semibold text-green-800 transition-colors hover:bg-green-50" href="/signup">
+              <Link className="flex w-full items-center justify-center rounded-xl border border-zinc-200 px-4 py-3 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-50" href="/signup">
                 Create account
               </Link>
+              <div className="mt-4 border-t border-zinc-100 pt-4">
+                <Link className="flex items-center gap-3 rounded-lg px-1 py-2 text-sm text-zinc-600 hover:text-green-700" href="/contact">
+                  <svg className="size-4 text-zinc-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" /></svg>
+                  Contact Us
+                </Link>
+                <Link className="flex items-center gap-3 rounded-lg px-1 py-2 text-sm text-zinc-600 hover:text-green-700" href="/refund-policy">
+                  <svg className="size-4 text-zinc-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" /></svg>
+                  Refund Policy
+                </Link>
+              </div>
             </div>
           )}
         </nav>
 
-        <div className="border-t border-zinc-100 px-6 py-4">
-          <p className="text-xs text-zinc-400">HMART · Shop Essentials</p>
+        <div className="border-t border-zinc-100 px-5 py-3">
+          <p className="text-[11px] text-zinc-400">HMART · Your Complete Supply Partner</p>
         </div>
       </aside>
 

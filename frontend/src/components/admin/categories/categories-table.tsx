@@ -44,12 +44,12 @@ export function CategoriesTable({
               <tr className="align-top text-zinc-700" key={category.id}>
                 <td className="px-5 py-4">
                   <div className="flex gap-3">
-                    {category.image_url ? (
+                    {(category as any).image_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         alt=""
                         className="size-12 rounded-md border border-zinc-200 object-cover"
-                        src={category.image_url}
+                        src={(category as any).image_url}
                       />
                     ) : null}
                     <div>

@@ -10,6 +10,7 @@ const navigationItems = [
   { label: "Categories", href: "/admin/categories", marker: "C" },
   { label: "Inventory", href: "/admin/inventory", marker: "I" },
   { label: "Orders", href: "/admin/orders", marker: "O" },
+  { label: "Inquiries", href: "/admin/inquiries", marker: "Q" },
   { label: "Users", href: "/admin/users", marker: "U" },
   { label: "Reports", href: "/admin/reports", marker: "R" },
 ];
